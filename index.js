@@ -1,28 +1,25 @@
-import http from "node:http";
-import fs from "node:fs";
+require("dotenv").config();
+const express = require("express");
+// import express from "express";
+const app = express();
+const PORT = process.env.PORT || 3000;
+const BASE_DIR =
+  "/Users/carlosperez/workspace/TOP-projects/repos/basic-informational-site";
 
-let indexHtml;
-let aboutHtml;
-let contactMeHtml;
-let errorHTML;
-
-fs.readFile("./index.html", "utf-8", (err, data) => { err ? indexHtml = err : indexHtml = data; });
-fs.readFile("./about.html", "utf-8", (err, data) => { err ? aboutHtml = err : aboutHtml = data });
-fs.readFile("./contact-me.html", "utf-8", (err, data) => { err ? contactMeHtml = err : contactMeHtml = data });
-fs.readFile("./404.html", "utf-8", (err, data) => { err ? errorHTML = err : errorHTML = data });
-
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    if (req.url == "/") {
-        res.write(indexHtml);
-    } else if (req.url == '/about') {
-        res.write(aboutHtml);
-    } else if (req.url == '/contact-me') {
-        res.write(contactMeHtml);
-    } else {
-        res.write(errorHTML);
-    }
-    res.end();
+app.get("/", (req, res) => {
+  res.sendFile(BASE_DIR + "/index.html");
+});
+app.get("/about", (req, res) => {
+  res.sendFile(BASE_DIR + "/about.html");
+});
+app.get("/contact-me", (req, res) => {
+  res.sendFile(BASE_DIR + "/contact-me.html");
+});
+app.use((req, res) => {
+  res.sendFile(BASE_DIR + "/404.html");
 });
 
-server.listen(8080);
+app.listen(PORT, (error) => {
+  if (error) throw error;
+  console.log(`App running at port ${PORT}`);
+});
